@@ -1,85 +1,58 @@
 """
-Module containing the App class and basic command implementations for the REPL Calculator.
+Module containing the App class for the Plugin-based REPL Calculator.
+This version dynamically loads commands from the app/plugins folder.
 """
+import pkgutil
+import importlib
 import sys
-from app.commands import CommandHandler
-
-class GreetCommand:
-    """
-    Command to return a greeting.
-    """
-    def execute(self, args: str) -> str:
-        """
-        Return a greeting message.
-
-        Parameters:
-            args (str): Unused.
-
-        Returns:
-            str: "Hello, world!"
-        """
-        return "Hello, world!"
-
-class AddCommand:
-    """
-    Command to add two numbers.
-    """
-    def execute(self, args: str) -> str:
-        """
-        Add two numbers provided as space-separated arguments.
-
-        Parameters:
-            args (str): Two numbers separated by a space.
-
-        Returns:
-            str: The result message or an error message.
-        """
-        tokens = args.split()
-        if len(tokens) != 2:
-            return "Usage: add <num1> <num2>"
-        try:
-            num1 = float(tokens[0])
-            num2 = float(tokens[1])
-        except ValueError:
-            return "Invalid number input."
-        result = num1 + num2
-        return f"The result of {num1} add {num2} is equal to {result}"
-
-class ExitCommand:
-    """
-    Command to exit the application.
-    """
-    def execute(self, args: str) -> str:
-        """
-        Exit the application.
-
-        Parameters:
-            args (str): Unused.
-
-        This method terminates the program.
-        """
-        sys.exit("Exiting the application. Goodbye!")
+from app.commands import CommandHandler, Command
+import app.plugins
 
 class App:
     """
-    Main application class for the REPL Calculator.
+    Main application class for the Plugin-based REPL Calculator.
     """
     def __init__(self):
         """
-        Initialize the App with a CommandHandler and register commands manually.
+        Initialize the App with a CommandHandler.
         """
         self.command_handler = CommandHandler()
-        self.command_handler.register_command("greet", GreetCommand())
-        self.command_handler.register_command("add", AddCommand())
-        self.command_handler.register_command("exit", ExitCommand())
+
+    def load_plugins(self):
+        """
+        Dynamically load all plugins from the 'app/plugins' package.
+        Each plugin is a package whose __init__.py defines a subclass of Command.
+        The plugin's folder name is used as the command key.
+        """
+        for _, plugin_name, is_pkg in pkgutil.iter_modules(app.plugins.__path__):
+            if is_pkg:
+                try:
+                    plugin_module = importlib.import_module(f'app.plugins.{plugin_name}')
+                except ImportError as e:
+                    print("Error importing plugin %s: %s", plugin_name, e)
+                    continue
+                for item_name in dir(plugin_module):
+                    item = getattr(plugin_module, item_name)
+                    try:
+                        if isinstance(item, type) and issubclass(item, Command) and item is not Command:
+                            self.command_handler.register_command(plugin_name, item())
+                    except TypeError:
+                        continue
+        print("Loaded commands: ", list(self.command_handler.commands.keys()))
+        return self.command_handler.commands
+
+
 
     def start(self):
         """
-        Start the REPL loop.
+        Start the REPL loop after loading plugins.
         """
-        print("Command-based REPL Calculator. Type 'exit' to exit.")
+        self.load_plugins()
+        print("Plugin-based REPL Calculator. Type 'exit' to exit.")
         while True:
             user_input = input(">>> ").strip()
+            if user_input.lower() == "exit":
+                sys.exit("Exiting the application. Goodbye!")
             output = self.command_handler.execute_command(user_input)
             if output:
                 print(output)

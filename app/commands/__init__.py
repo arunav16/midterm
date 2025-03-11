@@ -1,54 +1,56 @@
 """
-Module containing the abstract Command class and the CommandHandler for the REPL Calculator.
+Module containing the abstract Command class and the CommandHandler
+for the REPL Calculator.
 """
 
 from abc import ABC, abstractmethod
 
 class Command(ABC):
     """
-    Abstract base class representing a command.
+    Abstract base class for a command.
     """
     @abstractmethod
     def execute(self, args: str) -> str:
         """
-        Execute the command with the provided arguments.
+        Execute the command with the provided arguments and return a result string.
 
         Parameters:
             args (str): The arguments for the command.
 
         Returns:
-            str: The result of executing the command.
+            str: The result message.
         """
+        # No pass needed because the docstring is present.
 
 class CommandHandler:
     """
-    A class to register and execute commands.
+    Class for registering and executing commands.
     """
     def __init__(self):
         """
-        Initialize the CommandHandler with an empty registry.
+        Initialize an empty registry for commands.
         """
         self.commands = {}
 
     def register_command(self, command_name: str, command: Command):
         """
-        Register a command with the given name.
+        Register a command under a given name.
 
         Parameters:
-            command_name (str): The name to register the command under.
+            command_name (str): The key to register the command under.
             command (Command): An instance of a Command subclass.
         """
         self.commands[command_name] = command
 
     def execute_command(self, command_line: str) -> str:
         """
-        Execute a command based on the command line input.
+        Execute a command given a full command line.
 
         Parameters:
             command_line (str): The full command line string.
 
         Returns:
-            str: The result of the command or an error message.
+            str: The result of executing the command or an error message.
         """
         tokens = command_line.split(maxsplit=1)
         cmd_name = tokens[0]
