@@ -19,7 +19,6 @@ class Command(ABC):
         Returns:
             str: The result of executing the command.
         """
-        pass
 
 class CommandHandler:
     """
