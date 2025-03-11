@@ -9,7 +9,7 @@ class OperationStrategy:
     Base class for an operation strategy.
     """
     def compute(self, num1: float, num2: float) -> float:
-        """compute function"""
+        """compute method"""
         raise NotImplementedError("Subclasses must implement this method.")
 
 class DefaultAdditionStrategy(OperationStrategy):
@@ -21,7 +21,7 @@ class DefaultAdditionStrategy(OperationStrategy):
 
 class AlternativeAdditionStrategy(OperationStrategy):
     """
-    Alternative strategy for addition (for demonstration, identical to default).
+    Alternative strategy for addition (for demonstration, same as default).
     """
     def compute(self, num1: float, num2: float) -> float:
         return num1 + num2

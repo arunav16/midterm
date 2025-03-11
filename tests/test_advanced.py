@@ -2,6 +2,7 @@
 Integration tests for the advanced Plugin-based REPL Calculator (Version 3).
 """
 
+import os
 import pytest
 #import tempfile
 from app import App
@@ -95,6 +96,22 @@ def test_plugin_subtract():
     expected = "The result of 10.0 subtract 2.0 is equal to 8.0"
     assert result == expected
 
+def test_plugin_subtract_usage():
+    """
+    Test that SubtractCommand returns a usage message when not given exactly two arguments.
+    """
+    cmd = SubtractCommand()
+    result = cmd.execute("10")
+    assert result == "Usage: subtract <num1> <num2>"
+
+def test_plugin_subtract_invalid():
+    """
+    Test that SubtractCommand returns an error message for invalid numeric input.
+    """
+    cmd = SubtractCommand()
+    result = cmd.execute("10 a")
+    assert "Invalid number input" in result
+
 def test_plugin_multiply():
     """
     Test that the multiply plugin returns the correct result.
@@ -103,6 +120,18 @@ def test_plugin_multiply():
     result = cmd.execute("4 5")
     expected = "The result of 4.0 multiply 5.0 is equal to 20.0"
     assert result == expected
+
+def test_plugin_multiply_usage():
+    """Usage Test"""
+    cmd = MultiplyCommand()
+    result = cmd.execute("4")
+    assert result == "Usage: multiply <num1> <num2>"
+
+def test_plugin_multiply_invalid():
+    """Invalid Input Test"""
+    cmd = MultiplyCommand()
+    result = cmd.execute("4 b")
+    assert "Invalid number input" in result
 
 def test_plugin_divide_valid():
     """
@@ -190,3 +219,15 @@ def test_history_command_with_args():
     cmd = HistoryCommand()
     result = cmd.execute("extra")
     assert result == "History command does not accept any arguments."
+
+def test_environment_loading():
+    """
+    Test that App.load_environment_variables() returns a dictionary
+    containing environment variables.
+    """
+    app_instance = App()
+    env_vars = app_instance.load_environment_variables()
+    assert isinstance(env_vars, dict)
+    # Check that at least one variable from os.environ is present.
+    for key in os.environ:
+        assert key in env_vars
