@@ -1,6 +1,6 @@
 """
 Module containing the abstract Command class and the CommandHandler
-for the REPL Calculator.
+for the advanced REPL Calculator.
 """
 
 from abc import ABC, abstractmethod
@@ -13,14 +13,14 @@ class Command(ABC):
     def execute(self, args: str) -> str:
         """
         Execute the command with the provided arguments and return a result string.
-
+        
         Parameters:
             args (str): The arguments for the command.
-
+        
         Returns:
             str: The result message.
         """
-        # No pass needed because the docstring is present.
+        raise NotImplementedError("Subclasses must implement the execute method.")
 
 class CommandHandler:
     """
@@ -35,20 +35,20 @@ class CommandHandler:
     def register_command(self, command_name: str, command: Command):
         """
         Register a command under a given name.
-
+        
         Parameters:
-            command_name (str): The key to register the command under.
+            command_name (str): The key for the command.
             command (Command): An instance of a Command subclass.
         """
         self.commands[command_name] = command
 
     def execute_command(self, command_line: str) -> str:
         """
-        Execute a command given a full command line.
-
+        Execute a command based on the command line input.
+        
         Parameters:
             command_line (str): The full command line string.
-
+        
         Returns:
             str: The result of executing the command or an error message.
         """

@@ -19,3 +19,5 @@ class ExitCommand(Command):
         This method terminates the program.
         """
         sys.exit("Exiting the application. Goodbye!")
+
+__all__ = ['ExitCommand']

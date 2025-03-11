@@ -1,0 +1,3 @@
+timestamp,operation,expression,result
+2025-03-11 16:49:51.815017,subtract,10 2,8
+2025-03-11 16:49:51.860979,add,add 5 3,The result of 5.0 add 3.0 is equal to 8.0
