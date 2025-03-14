@@ -75,3 +75,7 @@ This midterm project is an advanced Python-based calculator application designed
    ```bash
    python3 main.py
    ```
+
+## Video Demonstration
+
+Watch the project presentation video on YouTube [here](https://youtu.be/fADksMO8x5w).
